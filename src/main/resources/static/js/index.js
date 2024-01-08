@@ -115,6 +115,12 @@ layui.use(function() {
         return false;
     });
 
+    //下载监听
+    form.on('submit(downloadGenerator)', function(data){
+        handleDownloadSubmit(data);
+        return false;
+    });
+
     // 监听点击保存配置按钮
     form.on('submit(formCodeGeneratorConfigSave)', function(data){
         formCache(data);
@@ -133,6 +139,18 @@ layui.use(function() {
                 alertFail(layer, response.message);
             }
         });
+    }
+
+    function handleDownloadSubmit(data){
+
+        const downloadElement = document.createElement('a')
+        downloadElement.style.display = 'none'
+        downloadElement.href = '/download'
+        downloadElement.target = '_blank'
+        document.body.appendChild(downloadElement)
+        downloadElement.click()
+        document.body.removeChild(downloadElement)
+
     }
 
     // 缓存

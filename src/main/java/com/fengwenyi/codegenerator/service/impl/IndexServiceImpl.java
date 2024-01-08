@@ -1,8 +1,11 @@
 package com.fengwenyi.codegenerator.service.impl;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ZipUtil;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.fengwenyi.api.result.ResponseTemplate;
 import com.fengwenyi.apistarter.utils.Asserts;
+import com.fengwenyi.codegenerator.Config;
 import com.fengwenyi.codegenerator.bo.CodeGeneratorBo;
 import com.fengwenyi.codegenerator.generator.MyAutoGenerator;
 import com.fengwenyi.codegenerator.service.IIndexService;
@@ -27,6 +30,9 @@ public class IndexServiceImpl implements IIndexService {
 
     @Override
     public ResponseTemplate<Void> codeGenerator(CodeGeneratorRequestVo requestVo) {
+        //判断文件是否已存在，存在删除文件
+        FileUtil.del(Config.OUTPUT_DIR);
+        FileUtil.del(Config.OUTPUT_DIR + ".zip");
 
         CodeGeneratorBo bo = new CodeGeneratorBo();
 
@@ -49,6 +55,9 @@ public class IndexServiceImpl implements IIndexService {
     private ResponseTemplate<Void> execute(CodeGeneratorBo bo) {
         try {
             new MyAutoGenerator(bo).execute();
+            //下载生成文件
+            String outDir = Config.OUTPUT_DIR;
+            ZipUtil.zip(outDir);
             return ResponseTemplate.success();
         } catch (Exception e) {
             String errMsg = ExceptionUtils.getStackTrace(e);
